@@ -74,6 +74,10 @@ async function getByScore(scoreFilter: "gt" | "lte") {
   return recommendationRepository.findAll();
 }
 
+async function deleteAll() {
+  return await recommendationRepository.deleteAll();
+}
+
 function getScoreFilter(random: number) {
   if (random < 0.7) {
     return "gt";
@@ -90,4 +94,5 @@ export const recommendationService = {
   get,
   getById: getByIdOrFail,
   getTop,
+  deleteAll
 };
