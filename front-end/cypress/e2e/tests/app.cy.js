@@ -4,19 +4,32 @@ beforeEach(() => {
     cy.resetDatabase();
 });
 
-describe('tests the creation of a recommendation', () => {
-    it('should display the recommendation after register', async () => {
+describe('test the application', () => {
+    it('should display the recommendation after register', () => {
         const recommendation = {
             name: 'Good Vibes',
             youtubeLink: 'https://youtu.be/J0DkaHJu4Js'
         }
+        const otherRecommendation = {
+            name: 'Good Vibes 2.0',
+            youtubeLink: 'https://youtu.be/iAG1W7QJ9FA'
+        }
 
-        cy.visit(URL);
-        cy.get('#name').type(recommendation.name);
-        cy.get('#link').type(recommendation.youtubeLink);
+        cy.createRecommendation(recommendation);
+        cy.wait(1000);
+        cy.upvotes(15);
+        cy.wait(1000);
+        cy.downvotes(5);
+        
+        cy.wait(1000);
+        cy.createRecommendation(otherRecommendation);
+        cy.wait(1000);
+        cy.upvotes(8);
+        
+        cy.wait(1000);
+        cy.visit(URL + 'top');
 
-        cy.intercept('POST', '/recommendations').as('post');
-        cy.get('#submit').click();
-        cy.wait('@post');
+        cy.wait(1000);
+        cy.visit(URL + 'random');
     });
 });
