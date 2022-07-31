@@ -3,8 +3,6 @@ import {Recommendation} from '@prisma/client';
 import {CreateRecommendationData, recommendationService} from '../../src/services/recommendationsService.js';
 import {recommendationRepository} from '../../src/repositories/recommendationRepository.js';
 
-jest.mock('../../src/repositories/recommendationRepository');
-
 describe('recommendation test suit', () => {
     const recommendation: CreateRecommendationData = {
         name: "teste",
@@ -88,9 +86,27 @@ describe('recommendation test suit', () => {
         expect(recommendationRepository.getAmountByScore).toBeCalled();
     });
 
-    it.todo('should get random'
-    //, async () => {}
-    );
+    it('returns not found error in random', async () => {
+        jest.spyOn(Math, "random").mockImplementationOnce(() : number => 0.6);
+        jest.spyOn(recommendationRepository, "findAll").mockImplementationOnce(() : any => []);
+        jest.spyOn(recommendationRepository, "findAll").mockImplementationOnce(() : any => []);
+
+        expect(recommendationService.getRandom).rejects.toEqual({type: "not_found", message: ""});
+    });
+
+    it('should get random', async () => {
+        const recommendation: Recommendation = {
+            id: 1,
+            name: "teste",
+            youtubeLink: "https://www.youtube.com/watch?v=tVlcKp3bWH8",
+            score: 10
+        };
+        jest.spyOn(Math, "random").mockImplementationOnce(() : number => 0.9);
+        jest.spyOn(recommendationRepository, "findAll").mockImplementationOnce(() : any => [recommendation]);
+        
+        const promise = await recommendationService.getRandom();
+        expect(promise).toBe(recommendation);
+    });
 
     it('delete all', async () => {
         jest.spyOn(recommendationRepository, "deleteAll").mockImplementationOnce(() : any => {});

@@ -31,5 +31,7 @@ describe('test the application', () => {
 
         cy.wait(1000);
         cy.visit(URL + 'random');
+
+        //TODO: testes de quando as curtidas são menores que -5
     });
 });
