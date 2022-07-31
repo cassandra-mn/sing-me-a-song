@@ -8,6 +8,20 @@ describe('recommendation test suit', () => {
         name: "teste",
         youtubeLink: "https://www.youtube.com/watch?v=tVlcKp3bWH8"
     }
+    const recommendations: Recommendation[] = [
+        {
+            id: 1,
+            name: "teste",
+            youtubeLink: "https://www.youtube.com/watch?v=tVlcKp3bWH8",
+            score: 15
+        },
+        {
+            id: 1,
+            name: "teste",
+            youtubeLink: "https://www.youtube.com/watch?v=tVlcKp3bWH8",
+            score: 10
+        }
+    ]
 
     it('creates a recommendation', async () => {
         jest.spyOn(recommendationRepository, "findByName").mockImplementationOnce(() : any => undefined);
@@ -87,25 +101,26 @@ describe('recommendation test suit', () => {
     });
 
     it('returns not found error in random', async () => {
-        jest.spyOn(Math, "random").mockImplementationOnce(() : number => 0.6);
         jest.spyOn(recommendationRepository, "findAll").mockImplementationOnce(() : any => []);
         jest.spyOn(recommendationRepository, "findAll").mockImplementationOnce(() : any => []);
 
         expect(recommendationService.getRandom).rejects.toEqual({type: "not_found", message: ""});
     });
 
-    it('should get random', async () => {
-        const recommendation: Recommendation = {
-            id: 1,
-            name: "teste",
-            youtubeLink: "https://www.youtube.com/watch?v=tVlcKp3bWH8",
-            score: 10
-        };
-        jest.spyOn(Math, "random").mockImplementationOnce(() : number => 0.9);
-        jest.spyOn(recommendationRepository, "findAll").mockImplementationOnce(() : any => [recommendation]);
+    it('should get random, case 70%', async () => {
+        jest.spyOn(Math, "random").mockImplementationOnce(() : number => 0.7);
+        jest.spyOn(recommendationRepository, "findAll").mockImplementationOnce(() : any => recommendations);
         
-        const promise = await recommendationService.getRandom();
-        expect(promise).toBe(recommendation);
+        await recommendationService.getRandom();
+        expect(recommendationRepository.findAll).toBeCalledWith({score: 10, scoreFilter: "lte"});
+    });
+
+    it('should get random, case 30%', async () => {
+        jest.spyOn(Math, "random").mockImplementationOnce(() : number => 0.6);
+        jest.spyOn(recommendationRepository, "findAll").mockImplementationOnce(() : any => recommendations);
+        
+        await recommendationService.getRandom();
+        expect(recommendationRepository.findAll).toBeCalledWith({score: 10, scoreFilter: "gt"});
     });
 
     it('delete all', async () => {
