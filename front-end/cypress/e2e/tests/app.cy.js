@@ -1,4 +1,4 @@
-const URL = 'http://localhost:3000/';
+/// <reference types="cypress" />
 
 beforeEach(() => {
     cy.resetDatabase();
@@ -71,3 +71,7 @@ describe('tests application routes', () => {
         cy.contains(`${recommendation.name}`).should('be.visible');
     });
 });
+
+afterEach(() => {
+    cy.resetDatabase();
+})

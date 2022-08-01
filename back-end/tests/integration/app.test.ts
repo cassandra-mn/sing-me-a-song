@@ -89,6 +89,6 @@ describe('tests get recommendations', () => {
     });
 });
 
-afterAll(async () => {
+afterEach(async () => {
     await prisma.$disconnect();
 });
